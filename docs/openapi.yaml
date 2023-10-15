@@ -1,0 +1,320 @@
+openapi: 3.1.0
+info:
+  title: FastAPI
+  version: 0.1.0
+paths:
+  /api/v1/persons/:
+    get:
+      tags:
+        - Person API
+      summary: Get All
+      operationId: get_all_api_v1_persons__get
+      responses:
+        "200":
+          description: All Persons
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Person"
+                type: array
+                title: Response 200 Get All Api V1 Persons  Get
+        "400":
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+    post:
+      tags:
+        - Person API
+      summary: Add
+      operationId: add_api_v1_persons__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PersonRequest"
+        required: true
+      responses:
+        "201":
+          description: Add new Person
+          headers:
+            Location:
+              description: Path to new Person
+              style: simple
+              schema:
+                type: string
+          content:
+            application/octet-stream:
+              example: ""
+        "400":
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+  /api/v1/persons/{person_id}:
+    get:
+      tags:
+        - Person API
+      summary: Get By Id
+      operationId: get_by_id_api_v1_persons__person_id__get
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+            title: Id
+      responses:
+        "200":
+          description: Person by ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Person"
+        "400":
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "404":
+          description: Not found Person by ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+    delete:
+      tags:
+        - Person API
+      summary: Delete
+      operationId: delete_api_v1_persons__person_id__delete
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+            title: Id
+      responses:
+        "204":
+          description: Person by ID was deleted
+          content:
+            application/octet-stream:
+              example: ""
+        "400":
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "404":
+          description: Person by ID was deleted
+          content:
+            application/octet-stream:
+              example: ""
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+    patch:
+      tags:
+        - Person API
+      summary: Patch
+      operationId: patch_api_v1_persons__person_id__patch
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+            title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PersonUpdate"
+      responses:
+        "200":
+          description: Person by ID was updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Person"
+        "400":
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "404":
+          description: Not found Person by ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+components:
+  schemas:
+    ErrorResponse:
+      properties: {}
+      type: object
+      title: ErrorResponse
+      example:
+        message: "Method: exception description"
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: "#/components/schemas/ValidationError"
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Person:
+      properties:
+        name:
+          type: string
+          title: Name
+        age:
+          anyOf:
+            - type: integer
+              maximum: 120
+              minimum: 1
+            - type: "null"
+          title: Age
+        address:
+          anyOf:
+            - type: string
+            - type: "null"
+          title: Address
+        work:
+          anyOf:
+            - type: string
+            - type: "null"
+          title: Work
+        id:
+          type: integer
+          title: Id
+      type: object
+      required:
+        - name
+        - id
+      title: Person
+    PersonRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        age:
+          anyOf:
+            - type: integer
+              maximum: 120
+              minimum: 1
+            - type: "null"
+          title: Age
+        address:
+          anyOf:
+            - type: string
+            - type: "null"
+          title: Address
+        work:
+          anyOf:
+            - type: string
+            - type: "null"
+          title: Work
+      type: object
+      required:
+        - name
+      title: PersonRequest
+    PersonUpdate:
+      properties:
+        name:
+          anyOf:
+            - type: string
+            - type: "null"
+          title: Name
+        age:
+          anyOf:
+            - type: integer
+              maximum: 120
+              minimum: 1
+            - type: "null"
+          title: Age
+        address:
+          anyOf:
+            - type: string
+            - type: "null"
+          title: Address
+        work:
+          anyOf:
+            - type: string
+            - type: "null"
+          title: Work
+      type: object
+      title: PersonUpdate
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
+    ValidationErrorResponse:
+      properties: {}
+      type: object
+      title: ValidationErrorResponse
+      example:
+        errors:
+          - loc: error location
+            msg: error message
+            type: type of error
+        message: Invalid request

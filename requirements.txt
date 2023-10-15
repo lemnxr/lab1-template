@@ -1,0 +1,8 @@
+fastapi
+SQLAlchemy
+uvicorn
+lxml
+psycopg2-binary
+python-multipart
+pytest
+pytest-asyncio

@@ -1,18 +1,40 @@
 version: "3"
+
 services:
-  postgres:
-    image: library/postgres:13
-    container_name: postgres
-    restart: on-failure
+  database:
+    image: postgres:16-alpine
     environment:
+      POSTGRES_DB: persons_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: postgres
-    volumes:
-      - db-data:/var/lib/postgresql/data
-      - ./postgres/:/docker-entrypoint-initdb.d/
+      POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  app:
+    container_name: person-server
+    image: app
+    build:
+      context: .
+      dockerfile:  dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - default
+    depends_on:
+      database:
+        condition: service_healthy
 volumes:
-  db-data:
+  data:
+    driver: local
+
+networks:
+  default:
